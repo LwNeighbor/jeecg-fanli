@@ -1,0 +1,12 @@
+
+*.class
+*.yml
+*.xml
+*.sql
+*.javai
+*.vuei
+*.txt
+*.properties
+*.log
+*.html
+*.ftl
