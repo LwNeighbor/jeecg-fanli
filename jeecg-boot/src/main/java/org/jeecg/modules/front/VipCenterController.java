@@ -150,7 +150,7 @@ public class VipCenterController extends BaseController{
             if(user != null){
                 QueryWrapper queryWrapper = new QueryWrapper();
                 queryWrapper.eq("vipId",user.getId());
-                queryWrapper.eq("cashStatus","2");      //提现成功的记录
+                queryWrapper.eq("cashs_status","2");      //提现成功的记录
                 List list = cashService.list(queryWrapper);
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("record",list);

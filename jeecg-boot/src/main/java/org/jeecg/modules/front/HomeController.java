@@ -214,9 +214,9 @@ public class HomeController extends BaseController {
 
                 if(type.equals("0")){
                     //查詢全部
-                    queryWrapper.ne("projectStatus","0");       //未支付的排除
+                    queryWrapper.ne("project_status","0");       //未支付的排除
                 }else{
-                    queryWrapper.eq("projectStatus",type);  //剛好可以按照條件
+                    queryWrapper.eq("project_status",type);  //剛好可以按照條件
                 }
 
                 List<ProjectRecord> list = projectRecordService.list(queryWrapper);
@@ -255,7 +255,7 @@ public class HomeController extends BaseController {
                 ProjectRecord projectRecord = projectRecordService.getById(id);
                 Project project = projectService.getById(projectRecord.getProjectId());
                 QueryWrapper queryWrapper = new QueryWrapper();
-                queryWrapper.eq("repaymentStatus","2"); //返利成功的记录
+                queryWrapper.eq("repayment_status","2"); //返利成功的记录
                 queryWrapper.eq("recordId",id);
                 List list = repaymentRecordService.list(queryWrapper);      //返利记录
                 JSONObject jsonObject = new JSONObject();

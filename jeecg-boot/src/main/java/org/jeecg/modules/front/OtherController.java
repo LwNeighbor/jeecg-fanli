@@ -168,7 +168,7 @@ public class OtherController extends BaseController {
             if(user != null){
                 QueryWrapper queryWrapper = new QueryWrapper();
                 queryWrapper.eq("vipId",user.getId());
-                queryWrapper.eq("rechargeStatus","2");      //充值成功的记录
+                queryWrapper.eq("recharge_status","2");      //充值成功的记录
                 List list = rechargeService.list(queryWrapper);
                 JSONObject json = new JSONObject();
                 json.put("record",list);
