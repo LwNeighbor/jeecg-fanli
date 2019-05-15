@@ -11,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
 
+import javax.persistence.Column;
+
 /**
  * @Description: 系统公告
  * @author： jeecg-boot
@@ -35,7 +37,7 @@ public class Notice implements Serializable {
 	private java.lang.String id;
 	/**公告详情*/
 	@Excel(name = "公告详情", width = 15)
-	@JsonValue
+	@Column(length=100000)
 	private java.lang.Object noticeDesc;
 	/**公告图片*/
 	@Excel(name = "公告图片", width = 15)

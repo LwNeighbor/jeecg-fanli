@@ -78,7 +78,7 @@ public class ProjectRecord implements Serializable {
     private java.lang.String projectId;
     /**
      * 产品状态
-     * 0.待支付 1.未完成 2.已完成
+     * 1.返利中 2.已完成
      */
     @Excel(name = "产品状态", width = 15, dicCode = "project_status")
     @Dict(dicCode = "project_status")
@@ -130,4 +130,16 @@ public class ProjectRecord implements Serializable {
      */
     @Excel(name = "项目名称", width = 15)
     private java.lang.String projectName;
+
+    /**
+     * 项目收益
+     */
+    @Excel(name = "项目收益", width = 15)
+    private java.lang.String profit;
+
+    /**
+     * 待返百分比
+     */
+    @Excel(name = "待返百分比", width = 15)
+    private java.lang.String noBackPercent;
 }

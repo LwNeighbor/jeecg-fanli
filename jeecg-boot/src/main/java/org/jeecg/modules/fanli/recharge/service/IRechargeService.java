@@ -11,4 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IRechargeService extends IService<Recharge> {
 
+    //确认充值
+    void confirmCharge(Recharge recharge);
 }

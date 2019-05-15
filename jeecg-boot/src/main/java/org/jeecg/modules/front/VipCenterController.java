@@ -1,5 +1,6 @@
 package org.jeecg.modules.front;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -10,11 +11,25 @@ import org.jeecg.common.util.DateUtils;
 import org.jeecg.common.util.PasswordUtil;
 import org.jeecg.modules.fanli.cash.entity.Cash;
 import org.jeecg.modules.fanli.cash.service.ICashService;
+import org.jeecg.modules.fanli.fanli.entity.Fanli;
+import org.jeecg.modules.fanli.fanli.service.IFanliService;
+import org.jeecg.modules.fanli.repaymentRecord.entity.RepaymentRecord;
+import org.jeecg.modules.fanli.repaymentRecord.service.IRepaymentRecordService;
 import org.jeecg.modules.fanli.vipUser.entity.VipUser;
 import org.jeecg.modules.fanli.vipUser.service.IVipUserService;
+import org.jeecg.modules.system.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -22,14 +37,59 @@ import java.util.List;
 @RequestMapping("/front/center")
 public class VipCenterController extends BaseController{
 
+    @Value(value = "${jeecg.path.upload}")
+    private String uploadpath;
+
     @Autowired
     private ICashService cashService;
     @Autowired
     private IVipUserService vipUserService;
+    @Autowired
+    private IFanliService fanliService;
+    @Autowired
+    private IRepaymentRecordService repaymentRecordService;
 
     @PostMapping(value = "/")
     @ApiOperation("个人中心")
     public Result<JSONObject> center(@RequestHeader("token") String token) {
+        Result<JSONObject> result = new Result<JSONObject>();
+        try{
+            VipUser user = verify(token);
+            if(user != null){
+                QueryWrapper<RepaymentRecord> queryWrapper = new QueryWrapper<>();
+                QueryWrapper<RepaymentRecord> repaymentTime = queryWrapper.between("repayment_time", DateUtil.offsetDay(new Date(), -1), DateUtil.offsetDay(new Date(), -1));
+                queryWrapper.eq("repayment_status","2");
+                List<RepaymentRecord> list = repaymentRecordService.list(repaymentTime);
+                double yesterMoney = 0.00;
+                for(RepaymentRecord repaymentRecord : list){
+                    yesterMoney = yesterMoney+Double.parseDouble(repaymentRecord.getRepaymentMoney());
+                }
+
+
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("avater",user.getAvater());
+                jsonObject.put("bucketmoney",user.getBucketmoney());
+                jsonObject.put("nickname",user.getNickname());
+                jsonObject.put("phone",user.getPhone());
+                jsonObject.put("total",user.getTotal());
+                jsonObject.put("yesterday",yesterMoney);
+                result.setResult(jsonObject);
+                result.success("操作成功");
+                return result;
+            }else {
+                //token失效,重新登陆
+                result.error9999();
+                return result;
+            }
+        }catch (Exception e){
+            result.error500("操作失败!");
+            return result;
+        }
+    }
+
+    @PostMapping(value = "/toEditVip")
+    @ApiOperation("去修改个人信息")
+    public Result<JSONObject> toEditVip(@RequestHeader("token") String token) {
         Result<JSONObject> result = new Result<JSONObject>();
         try{
             VipUser user = verify(token);
@@ -50,6 +110,51 @@ public class VipCenterController extends BaseController{
         }
     }
 
+    @PostMapping(value = "/upload")
+    public Result<SysUser> upload(HttpServletRequest request, HttpServletResponse response,
+                                  @RequestHeader("token") String token) {
+        Result<SysUser> result = new Result<>();
+        try {
+
+            VipUser user = verify(token);
+            if(user != null){
+                String ctxPath = uploadpath;
+                String fileName = null;
+                String bizPath = "user";
+                String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
+                File file = new File(ctxPath + File.separator + bizPath + File.separator + nowday);
+                if (!file.exists()) {
+                    file.mkdirs();// 创建文件根目录
+                }
+                MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+                MultipartFile mf = multipartRequest.getFile("file");// 获取上传文件对象
+                String orgName = mf.getOriginalFilename();// 获取文件名
+                fileName = orgName.substring(0, orgName.lastIndexOf(".")) + "_" + System.currentTimeMillis() + orgName.substring(orgName.indexOf("."));
+                String savePath = file.getPath() + File.separator + fileName;
+                File savefile = new File(savePath);
+                FileCopyUtils.copy(mf.getBytes(), savefile);
+                String dbpath = bizPath + File.separator + nowday + File.separator + fileName;
+                if (dbpath.contains("\\")) {
+                    dbpath = dbpath.replace("\\", "/");
+                }
+                user.setAvater(dbpath);
+                vipUserService.updateById(user);
+                result.setSuccess(true);
+                result.success("操作成功");
+                return result;
+            }else {
+                //token失效,重新登陆
+                result.error9999();
+                return result;
+            }
+
+        } catch (IOException e) {
+            result.error500("操作失败!");
+            return result;
+        }
+
+    }
+
     /**
      * 去提现
      * @param token
@@ -67,7 +172,15 @@ public class VipCenterController extends BaseController{
                     return result;
                 }
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("user",user);
+                List<Fanli> list = fanliService.list();
+                if(list.size() > 0){
+                    Fanli fanli = list.get(0);
+                    jsonObject.put("explain",fanli.getRepaymentNotice());
+                }else {
+                    jsonObject.put("explain",null);
+                }
+                jsonObject.put("account",user.getCashAccount());
+                jsonObject.put("accountName",user.getCashName());
                 result.setResult(jsonObject);
                 result.success("操作成功");
                 return result;
@@ -114,15 +227,12 @@ public class VipCenterController extends BaseController{
                     return result;
                 }
 
-                Cash cash = new Cash();
-                cash.setCashAccount(user.getCashAccount());
-                cash.setCashMoney(money);
-                cash.setCashName(user.getCashName());
-                cash.setCashStatus("1");        //提现中
-                cash.setCashTime(DateUtils.formatTime(new Date()));
-                cash.setVipId(user.getId());
-                cashService.save(cash);
+                if(Double.parseDouble(user.getBucketmoney()) - Double.parseDouble(money) < 0){
+                    result.error500("余额不足");
+                    return result;
+                }
 
+                cashService.toCash(money,user);
                 result.success("操作成功");
                 return result;
             }else {
@@ -149,8 +259,8 @@ public class VipCenterController extends BaseController{
             VipUser user = verify(token);
             if(user != null){
                 QueryWrapper queryWrapper = new QueryWrapper();
-                queryWrapper.eq("vipId",user.getId());
-                queryWrapper.eq("cashs_status","2");      //提现成功的记录
+                queryWrapper.eq("vip_id",user.getId());
+                queryWrapper.eq("cash_status","2");      //提现成功的记录
                 List list = cashService.list(queryWrapper);
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("record",list);
@@ -181,7 +291,7 @@ public class VipCenterController extends BaseController{
             VipUser user = verify(token);
             if(user != null){
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("name",user.getCashName());
+                jsonObject.put("name",user.getCashRealname());
                 jsonObject.put("account",user.getCashAccount());
                 jsonObject.put("accountName",user.getCashName());
                 result.setResult(jsonObject);
@@ -207,7 +317,7 @@ public class VipCenterController extends BaseController{
      * @return
      */
     @PostMapping(value = "/EditCash")
-    @ApiOperation("去修改提现信息")
+    @ApiOperation("修改提现信息")
     public Result<JSONObject> EditCash(@RequestHeader("token") String token,
                                          @RequestParam("name")String name,
                                          @RequestParam("account")String account,

@@ -23,6 +23,7 @@ import org.jeecg.modules.fanli.vipUser.service.IVipUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -57,8 +58,13 @@ public class OtherController extends BaseController {
     public Result<JSONObject> noticeList(){
         Result<JSONObject> result = new Result<JSONObject>();
         List<Notice> list = noticeService.list();
+        List list1 =  new ArrayList();
         JSONObject obj = new JSONObject();
-        obj.put("notice",list);
+        list.stream().forEach(notice -> {
+            notice.setNoticeDesc("");
+            list1.add(notice);
+        });
+        obj.put("notice",list1);
         result.setResult(obj);
         result.success("操作成功");
         return result;
@@ -68,7 +74,7 @@ public class OtherController extends BaseController {
      * 公告详情
      * @return
      */
-    @GetMapping("/nDetail")
+    @PostMapping("/nDetail")
     @ApiOperation("公告详情")
     public Result<JSONObject> nDetail(@RequestParam("id") String id){
         Result<JSONObject> result = new Result<JSONObject>();
@@ -92,7 +98,11 @@ public class OtherController extends BaseController {
         List<Customer> list = customerService.list();
         List<Fanli> list1 = fanliService.list();
         json.put("customer",list);
-        json.put("explain",list1);
+        if(list1.size() > 0){
+            json.put("explainId",list1.get(0).getId());
+        }else {
+            json.put("explainId",null);
+        }
         result.setResult(json);
         result.success("操作成功");
         return result;
@@ -102,7 +112,7 @@ public class OtherController extends BaseController {
      * 充值说明
      * @return
      */
-    @GetMapping("/rechargeExplain")
+    @PostMapping("/rechargeExplain")
     @ApiOperation("充值说明")
     public Result<JSONObject> explain(@RequestParam("id")String id){
         Result<JSONObject> result = new Result<JSONObject>();
@@ -124,11 +134,11 @@ public class OtherController extends BaseController {
      * @param type  类型 1.支付宝 2.微信
      * @return
      */
-    @GetMapping("/recharge")
+    @PostMapping("/recharge")
     @ApiOperation("充值")
     public Result<JSONObject> recharge(@RequestHeader("token") String token,
-                                       @RequestHeader("money") String money,
-                                       @RequestHeader("type") String type){
+                                       @RequestParam("money") String money,
+                                       @RequestParam("type") String type){
         Result<JSONObject> result = new Result<JSONObject>();
         try{
             VipUser user = verify(token);
@@ -139,9 +149,9 @@ public class OtherController extends BaseController {
                 recharge.setRechargeTime(DateUtils.formatTime(new Date()));
                 recharge.setRechargeType(type);
                 recharge.setVipId(user.getId());
+                recharge.setPhone(user.getPhone());
 
                 rechargeService.save(recharge);
-                //token失效,重新登陆
                 result.success("操作成功");
                 return result;
             }else {
@@ -159,7 +169,7 @@ public class OtherController extends BaseController {
      * 充值记录
      * @return
      */
-    @GetMapping("/rechargeRecord")
+    @PostMapping("/rechargeRecord")
     @ApiOperation("充值记录")
     public Result<JSONObject> rechargeRecord(@RequestHeader("token")String token){
         Result<JSONObject> result = new Result<JSONObject>();
@@ -167,11 +177,12 @@ public class OtherController extends BaseController {
             VipUser user = verify(token);
             if(user != null){
                 QueryWrapper queryWrapper = new QueryWrapper();
-                queryWrapper.eq("vipId",user.getId());
+                queryWrapper.eq("vip_id",user.getId());
                 queryWrapper.eq("recharge_status","2");      //充值成功的记录
                 List list = rechargeService.list(queryWrapper);
                 JSONObject json = new JSONObject();
                 json.put("record",list);
+                json.put("total",user.getBuymoney());   //充值i金额
                 result.setResult(json);
                 result.success("操作成功");
                 return result;
@@ -210,7 +221,7 @@ public class OtherController extends BaseController {
      * 用户反馈
      * @return
      */
-    @GetMapping("/feedback")
+    @PostMapping("/feedback")
     @ApiOperation("用户反馈")
     public Result<JSONObject> feedback(@RequestParam("content") String content,
                                        @RequestHeader("token")String token){

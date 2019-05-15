@@ -29,6 +29,11 @@ public class Cash implements Serializable {
     @Excel(name = "提现账号", width = 15)
     private java.lang.String cashAccount;
     /**
+     * 手机号
+     */
+    @Excel(name = "手机号", width = 15)
+    private java.lang.String phone;
+    /**
      * 提现金额
      */
     @Excel(name = "提现金额", width = 15)

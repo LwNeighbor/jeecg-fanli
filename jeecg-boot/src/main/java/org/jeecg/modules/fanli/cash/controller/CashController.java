@@ -108,6 +108,26 @@ public class CashController {
 		
 		return result;
 	}
+
+	 /**
+	  *  确认体现
+	  * @param cash
+	  * @return
+	  */
+	 @PutMapping(value = "/cash")
+	 public Result<Cash> cash(@RequestBody Cash cash) {
+		 Result<Cash> result = new Result<Cash>();
+		 Cash cashEntity = cashService.getById(cash.getId());
+		 if(cashEntity==null) {
+			 result.error500("未找到对应实体");
+		 }else {
+		 	 cash.setCashStatus("2");
+			 boolean ok = cashService.updateById(cash);
+			 result.success("修改成功!");
+		 }
+
+		 return result;
+	 }
 	
 	/**
 	  *   通过id删除

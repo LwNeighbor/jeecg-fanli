@@ -25,6 +25,7 @@ import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,7 +78,13 @@ public class FanliController {
 	public Result<Fanli> add(@RequestBody Fanli fanli) {
 		Result<Fanli> result = new Result<Fanli>();
 		try {
-			fanliService.save(fanli);
+			List<Fanli> list = fanliService.list();
+			if(list.size() > 0){
+				fanli.setId(list.get(0).getId());
+				fanliService.updateById(fanli);
+			}else {
+				fanliService.save(fanli);
+			}
 			result.success("添加成功！");
 		} catch (Exception e) {
 			e.printStackTrace();

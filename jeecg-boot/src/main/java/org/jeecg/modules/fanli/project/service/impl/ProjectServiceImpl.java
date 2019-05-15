@@ -51,10 +51,10 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         projectRecord.setNowDay("0");       //收益第0天
         projectRecord.setProjectDay(project.getProjectTime());      //投资天数
         projectRecord.setProjectId(projectId);
-        projectRecord.setProjectStatus("2");        //肯定是购买成功的
+        projectRecord.setProjectStatus("1");        //返利中 状态
         projectRecord.setRecordStart(DateUtil.format(DateUtil.offsetDay(new Date(), 1), DateUtils.time_sdf));         //起息时间, 明天现在
         projectRecord.setRepaymentTime(DateUtil.format(DateUtil.offsetDay(
-                new Date(), Integer.parseInt(project.getProjectTime())), DateUtils.time_sdf));           //回款日期, 即项目的完结日期
+                new Date(), Integer.parseInt(project.getProjectTime())), DateUtils.date_sdf));           //回款日期, 即项目的完结日期
         projectRecord.setRepaymentType("先息后本");
         projectRecord.setVipId(user.getId());
         projectRecord.setProjectName(projectRecord.getProjectName()); //项目介绍
@@ -62,14 +62,16 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         projectRecord.setEndTime(DateUtil.format(DateUtil.offsetDay(
                 new Date(), Integer.parseInt(project.getProjectTime())), DateUtils.time_sdf));
         projectRecord.setPhone(user.getPhone());
+        projectRecord.setProfit(project.getProfit());
+        projectRecord.setNoBackPercent("100");
         projectRecordMapper.insert(projectRecord);
-
+        //投资金额
         String proMoney = project.getProjectMoney();
-        String profitMoney = project.getProfit();
+
         //用户剩余的钱包金额
         String bukMoney = NumberUtil.roundStr(NumberUtil.sub(user.getBucketmoney(), proMoney).doubleValue(), 2);
         //该项目获得收益后的总资产
-        String fMoney = NumberUtil.roundStr(NumberUtil.add(user.getTotal(), profitMoney).doubleValue(), 2);
+        String fMoney = NumberUtil.roundStr(NumberUtil.sub(user.getTotal(), proMoney).doubleValue(), 2);
         user.setBucketmoney(bukMoney);
         user.setTotal(fMoney);
 

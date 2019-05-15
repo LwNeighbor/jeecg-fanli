@@ -1,6 +1,7 @@
 package org.jeecg.modules.fanli.notice.controller;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.io.IOException;
@@ -8,8 +9,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import cn.hutool.core.date.DateUtil;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.util.DateUtils;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.fanli.notice.entity.Notice;
 import org.jeecg.modules.fanli.notice.service.INoticeService;
@@ -77,6 +81,7 @@ public class NoticeController {
 	public Result<Notice> add(@RequestBody Notice notice) {
 		Result<Notice> result = new Result<Notice>();
 		try {
+			notice.setNoticeTime(DateUtils.formatDate(new Date(),DateUtils.time_sdf.toPattern()));
 			noticeService.save(notice);
 			result.success("添加成功！");
 		} catch (Exception e) {
@@ -99,6 +104,7 @@ public class NoticeController {
 		if(noticeEntity==null) {
 			result.error500("未找到对应实体");
 		}else {
+			notice.setNoticeTime(DateUtils.formatDate(new Date(),DateUtils.time_sdf.toPattern()));
 			boolean ok = noticeService.updateById(notice);
 			//TODO 返回false说明什么？
 			if(ok) {

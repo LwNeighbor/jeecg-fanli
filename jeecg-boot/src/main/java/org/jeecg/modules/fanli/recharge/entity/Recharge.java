@@ -36,6 +36,9 @@ public class Recharge implements Serializable {
 	/**充值金额*/
 	@Excel(name = "充值金额", width = 15)
 	private java.lang.String rechargeMoney;
+	/**用户手机号*/
+	@Excel(name = "用户手机号", width = 15)
+	private java.lang.String phone;
 	/**充值状态*/
 	@Excel(name = "充值状态", width = 15,dicCode="rechargeStatus")
 	@Dict(dicCode = "recharge_status")
@@ -43,7 +46,7 @@ public class Recharge implements Serializable {
 	/**充值时间*/
 	@Excel(name = "充值时间", width = 15)
 	private java.lang.String rechargeTime;
-	/**充值方式*/
+	/**充值方式 1.支付宝 2.微信*/
 	@Excel(name = "充值方式", width = 15,dicCode="rechargeType")
 	@Dict(dicCode = "recharge_type")
 	private java.lang.String rechargeType;

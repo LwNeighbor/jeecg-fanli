@@ -2,6 +2,7 @@ package org.jeecg.modules.fanli.cash.service;
 
 import org.jeecg.modules.fanli.cash.entity.Cash;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.modules.fanli.vipUser.entity.VipUser;
 
 /**
  * @Description: 提现
@@ -11,4 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ICashService extends IService<Cash> {
 
+    void toCash(String money, VipUser user);
 }

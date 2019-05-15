@@ -11,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
 
+import javax.persistence.Column;
+
 /**
  * @Description: 平台基本设置
  * @author： jeecg-boot
@@ -24,7 +26,7 @@ public class Fanli implements Serializable {
     
 	/**充值说明*/
 	@Excel(name = "充值说明", width = 15)
-	@JsonValue
+	@Column(length=100000)
 	private String buyDesc;
 	/**创建人*/
 	@Excel(name = "创建人", width = 15)
@@ -42,7 +44,7 @@ public class Fanli implements Serializable {
 	private String lowMoney;
 	/**新手教程*/
 	@Excel(name = "新手教程", width = 15)
-	@JsonValue
+	@Column(length=100000)
 	private String newCourse;
 	/**提现说明*/
 	@Excel(name = "提现说明", width = 15)

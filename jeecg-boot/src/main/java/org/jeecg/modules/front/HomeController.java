@@ -125,6 +125,55 @@ public class HomeController extends BaseController {
     }
 
     /**
+     * 立即投资
+     * @param projectId     项目id
+     * @param token
+     * @return
+     */
+    @PostMapping(value = "/investment")
+    @ApiOperation("立即投资")
+    public Result<JSONObject> investment(@RequestHeader("token") String token,
+                                         @RequestParam("projectId") String projectId) {
+        Result<JSONObject> result = new Result<JSONObject>();
+        try {
+            VipUser user = verify(token);
+            Project byId = projectService.getById(projectId);
+            if (user != null) {
+                if (Double.parseDouble(user.getBucketmoney()) - Double.parseDouble(byId.getProjectMoney()) < 0) {
+                    //余额不足
+                    result.setCode(CommonConstant.MONEY_NOT_ENOUGH2333);
+                    result.setSuccess(false);
+                    result.setMessage("余额不足");
+                    return result;
+                }
+
+                if (!byId.getPermission().equals("-1") && Double.parseDouble(user.getBuymoney()) - Double.parseDouble(byId.getPermission()) < 0) {
+                    //未充值到指定金额
+                    result.setCode(CommonConstant.BUY_NOT_ENOUGH2333);
+                    result.setSuccess(false);
+                    result.setMessage("充值未达到"+byId.getPermission()+"元");
+                    return result;
+                }
+
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("money", byId.getProjectMoney());
+                DateTime dateTime = DateUtil.offsetDay(new Date(), Integer.parseInt(byId.getProjectTime()));
+                jsonObject.put("time",DateUtils.formatDate(dateTime,DateUtils.date_sdf.toPattern()));
+                result.setResult(jsonObject);
+                result.success("操作成功");
+                return result;
+            } else {
+                //token失效,重新登陆
+                result.error9999();
+                return result;
+            }
+        } catch (Exception e) {
+            result.error500("操作失败!");
+            return result;
+        }
+    }
+
+    /**
      * 购买项目
      *
      * @param token
@@ -143,6 +192,7 @@ public class HomeController extends BaseController {
         Result<JSONObject> result = new Result<JSONObject>();
         try {
             VipUser user = verify(token);
+            Project byId = projectService.getById(projectId);
             if (user != null) {
                 String phone = user.getPhone();
                 String pwd = user.getTradepwd();
@@ -166,11 +216,11 @@ public class HomeController extends BaseController {
                     return result;
                 }
 
-                if (Double.parseDouble(user.getBuymoney()) - 500 < 0) {
+                if (!byId.getPermission().equals("-1") && Double.parseDouble(user.getBuymoney()) - Double.parseDouble(byId.getPermission()) < 0) {
                     //未充值到500元
                     result.setCode(CommonConstant.BUY_NOT_ENOUGH2333);
                     result.setSuccess(false);
-                    result.setMessage("充值未达到500元");
+                    result.setMessage("充值未达到"+byId.getPermission()+"元");
                     return result;
                 }
 
@@ -256,7 +306,7 @@ public class HomeController extends BaseController {
                 Project project = projectService.getById(projectRecord.getProjectId());
                 QueryWrapper queryWrapper = new QueryWrapper();
                 queryWrapper.eq("repayment_status","2"); //返利成功的记录
-                queryWrapper.eq("recordId",id);
+                queryWrapper.eq("record_id",id);
                 List list = repaymentRecordService.list(queryWrapper);      //返利记录
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("project",project);

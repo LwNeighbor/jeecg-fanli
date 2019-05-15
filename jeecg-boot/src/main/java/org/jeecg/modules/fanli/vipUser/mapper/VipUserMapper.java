@@ -13,5 +13,4 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @version： V1.0
  */
 public interface VipUserMapper extends BaseMapper<VipUser> {
-
 }

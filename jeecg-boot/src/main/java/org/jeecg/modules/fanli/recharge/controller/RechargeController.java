@@ -88,7 +88,7 @@ public class RechargeController {
 	}
 	
 	/**
-	  *  编辑
+	  *  编辑/确认充值
 	 * @param recharge
 	 * @return
 	 */
@@ -99,6 +99,7 @@ public class RechargeController {
 		if(rechargeEntity==null) {
 			result.error500("未找到对应实体");
 		}else {
+			rechargeService.confirmCharge(recharge);
 			boolean ok = rechargeService.updateById(recharge);
 			//TODO 返回false说明什么？
 			if(ok) {
@@ -108,6 +109,29 @@ public class RechargeController {
 		
 		return result;
 	}
+
+	 /**
+	  *  编辑/确认充值
+	  * @param recharge
+	  * @return
+	  */
+	 @PutMapping(value = "/recharge")
+	 public Result<Recharge> recharge(@RequestBody Recharge recharge) {
+		 Result<Recharge> result = new Result<Recharge>();
+		 Recharge rechargeEntity = rechargeService.getById(recharge.getId());
+		 if(!rechargeEntity.getRechargeStatus().equals("1")){
+		 	//说明已经充值过了
+			 result.success("已充值");
+		 }else {
+			 if(rechargeEntity==null) {
+				 result.error500("未找到对应实体");
+			 }else {
+				 rechargeService.confirmCharge(rechargeEntity);
+				 result.success("修改成功!");
+			 }
+		 }
+		 return result;
+	 }
 	
 	/**
 	  *   通过id删除
