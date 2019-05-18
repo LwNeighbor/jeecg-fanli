@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
   servlet:
     context-path: /jeecg-boot
     compression:
@@ -7,21 +7,25 @@ server:
       mime-types: application/javascript,application/json,application/xml,text/html,text/xml,text/plain,text/css,image/*
 
 management:
- endpoints:
-  web:
-   exposure:
-    include: metrics,httptrace
-    
+  endpoints:
+    web:
+      exposure:
+        include: metrics,httptrace
+
 spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
   mail:
     host: smtp.163.com
     username: jeecgos@163.com
     password: ??
     properties:
-      mail: 
-        smtp: 
+      mail:
+        smtp:
           auth: true
-          starttls: 
+          starttls:
             enable: true
             required: true
   ## quartz定时任务,采用数据库方式
@@ -66,7 +70,7 @@ spring:
         min-idle: 5
         maxActive: 20
         # 配置获取连接等待超时的时间
-        maxWait: 60000
+        maxWait: 6000000
         # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
         timeBetweenEvictionRunsMillis: 60000
         # 配置一个连接在池中最小生存的时间，单位是毫秒
@@ -84,9 +88,9 @@ spring:
         connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
       datasource:
         master:
-          url: jdbc:mysql://127.0.0.1:3306/jeecg-boot?characterEncoding=UTF-8&useUnicode=true&useSSL=false
-          username: root
-          password: root
+          url: jdbc:mysql://122.114.239.176:3306/jeecg-boot?useUnicode=true&serverTimezone=GMT%2B8&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+          username: jeecg-boot
+          password: 123456
           driver-class-name: com.mysql.jdbc.Driver
           # 多数据源配置
           #multi-datasource1:
@@ -97,7 +101,7 @@ spring:
   #redis 配置
   redis:
     database: 0
-    host: 118.89.223.144
+    host: 122.114.239.176
     lettuce:
       pool:
         max-active: 8   #最大连接数据库连接数,设 0 为没有限制
@@ -115,6 +119,6 @@ mybatis-plus:
 jeecg :
   path :
     #文件上传根目录 设置
-    upload: /opt/jeecg-boot/upload
+    upload: /home/upFiles
     #webapp文件路径
-    webapp: /opt/jeecg-boot/webapp
+    webapp: /home/webapp

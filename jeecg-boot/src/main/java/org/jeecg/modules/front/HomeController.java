@@ -217,7 +217,7 @@ public class HomeController extends BaseController {
                 }
 
                 if (!byId.getPermission().equals("-1") && Double.parseDouble(user.getBuymoney()) - Double.parseDouble(byId.getPermission()) < 0) {
-                    //未充值到500元
+                    //未充值到指定金额
                     result.setCode(CommonConstant.BUY_NOT_ENOUGH2333);
                     result.setSuccess(false);
                     result.setMessage("充值未达到"+byId.getPermission()+"元");
@@ -261,6 +261,7 @@ public class HomeController extends BaseController {
             VipUser user = verify(token);
             if (user != null) {
                 QueryWrapper<ProjectRecord> queryWrapper = new QueryWrapper();
+                queryWrapper.eq("phone",user.getPhone());
 
                 if(type.equals("0")){
                     //查詢全部

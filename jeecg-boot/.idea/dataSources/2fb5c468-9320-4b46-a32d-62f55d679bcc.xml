@@ -1742,6 +1742,7 @@
       <Position>14</Position>
       <Comment>当前天数</Comment>
       <DataType>varchar(100)|0s</DataType>
+      <DefaultExpression>&apos;1&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="406" parent="287" name="create_by">

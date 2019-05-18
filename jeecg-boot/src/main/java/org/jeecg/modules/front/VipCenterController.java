@@ -110,10 +110,48 @@ public class VipCenterController extends BaseController{
         }
     }
 
+    /**
+     * 修改昵称
+     * @param token
+     * @param nickname      新昵称
+     * @param id    用户id
+     * @return
+     */
+    @PostMapping(value = "/EditVip")
+    @ApiOperation("修改个人信息")
+    public Result<JSONObject> EditVip(@RequestHeader("token") String token,
+                                      @RequestParam("nickname") String nickname,
+                                      @RequestParam("id") String id) {
+        Result<JSONObject> result = new Result<JSONObject>();
+        try{
+            VipUser user = verify(token);
+            if(user != null){
+                user.setNickname(nickname);
+                vipUserService.updateById(user);
+                result.success("操作成功");
+                return result;
+            }else {
+                //token失效,重新登陆
+                result.error9999();
+                return result;
+            }
+        }catch (Exception e){
+            result.error500("操作失败!");
+            return result;
+        }
+    }
+
+    /**
+     * 上传文件
+     * @param request
+     * @param response
+     * @param token
+     * @return
+     */
     @PostMapping(value = "/upload")
-    public Result<SysUser> upload(HttpServletRequest request, HttpServletResponse response,
+    public Result<JSONObject> upload(HttpServletRequest request, HttpServletResponse response,
                                   @RequestHeader("token") String token) {
-        Result<SysUser> result = new Result<>();
+        Result<JSONObject> result = new Result<>();
         try {
 
             VipUser user = verify(token);
@@ -139,8 +177,11 @@ public class VipCenterController extends BaseController{
                 }
                 user.setAvater(dbpath);
                 vipUserService.updateById(user);
-                result.setSuccess(true);
                 result.success("操作成功");
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("avater",dbpath);
+                result.setResult(jsonObject);
+
                 return result;
             }else {
                 //token失效,重新登陆

@@ -11,4 +11,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IVipUserService extends IService<VipUser> {
 
+    void rechargeVip(VipUser vipUser) throws Exception;
+
+    void cashVip(VipUser vipUser) throws Exception;
 }

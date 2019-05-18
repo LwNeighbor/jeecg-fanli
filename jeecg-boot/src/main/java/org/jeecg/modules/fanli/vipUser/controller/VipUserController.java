@@ -105,9 +105,61 @@ public class VipUserController {
 				result.success("修改成功!");
 			}
 		}
-		
 		return result;
 	}
+	 /**
+	  *  充值
+	  * @param vipUser
+	  * @return
+	  */
+	 @PutMapping(value = "/recharge")
+	 public Result<VipUser> recharge(@RequestBody VipUser vipUser) {
+		 Result<VipUser> result = new Result<VipUser>();
+		 VipUser vipUserEntity = vipUserService.getById(vipUser.getId());
+		 if(vipUserEntity==null) {
+			 result.error500("未找到对应实体");
+		 }else {
+		 	//充值,更新用户余额以及生成充值记录
+			 try {
+				 vipUserService.rechargeVip(vipUser);
+				 result.success("操作成功");
+			 } catch (Exception e) {
+				 e.printStackTrace();
+				 result.error500("操作失败");
+			 }
+
+		 }
+		 return result;
+	 }
+	 /**
+	  *  提现
+	  * @param vipUser
+	  * @return
+	  */
+	 @PutMapping(value = "/cash")
+	 public Result<VipUser> cash(@RequestBody VipUser vipUser) {
+		 Result<VipUser> result = new Result<VipUser>();
+		 VipUser vipUserEntity = vipUserService.getById(vipUser.getId());
+		 if(vipUserEntity==null) {
+			 result.error500("未找到对应实体");
+		 }else {
+		 	//判断该用户是否绑定账号
+			 if(vipUserEntity.getCashAccount().equals("-1")){
+				 result.error500("该用户未绑定提现账号,暂无法提现");
+				 return result;
+			 }
+			 //充值,更新用户余额以及生成提现记录
+			 try {
+				 vipUserService.cashVip(vipUser);
+				 result.success("操作成功");
+			 } catch (Exception e) {
+				 e.printStackTrace();
+				 result.error500("操作失败");
+			 }
+
+		 }
+		 return result;
+	 }
 	
 	/**
 	  *   通过id删除

@@ -48,7 +48,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         projectRecord.setBuyMoney(project.getProjectMoney());   //购买金额
         projectRecord.setBuyTime(DateUtil.format(new Date(), DateUtils.time_sdf));  //购买时间
         projectRecord.setDayProfit(project.getDayProfit());     //每日返利金额
-        projectRecord.setNowDay("0");       //收益第0天
+        projectRecord.setNowDay("1");       //收益第0天
         projectRecord.setProjectDay(project.getProjectTime());      //投资天数
         projectRecord.setProjectId(projectId);
         projectRecord.setProjectStatus("1");        //返利中 状态
@@ -57,7 +57,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 new Date(), Integer.parseInt(project.getProjectTime())), DateUtils.date_sdf));           //回款日期, 即项目的完结日期
         projectRecord.setRepaymentType("先息后本");
         projectRecord.setVipId(user.getId());
-        projectRecord.setProjectName(projectRecord.getProjectName()); //项目介绍
+        projectRecord.setProjectName(project.getProjectName()); //项目介绍
         projectRecord.setStartTime(DateUtil.format(new Date(), DateUtils.time_sdf));
         projectRecord.setEndTime(DateUtil.format(DateUtil.offsetDay(
                 new Date(), Integer.parseInt(project.getProjectTime())), DateUtils.time_sdf));
@@ -77,20 +77,17 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
         vipUserMapper.updateById(user);
 
+        //每天应该返的钱
+        double perDayProfit = NumberUtil.div(Double.parseDouble(project.getProfit()), Double.parseDouble(project.getProjectTime()));
         //自动生成若干条返利记录
         for(int i=0;i < Integer.parseInt(project.getProjectTime());i++){
             RepaymentRecord repaymentRecord = new RepaymentRecord();
             repaymentRecord.setRecordId(projectRecord.getId()); //任务记录id
             repaymentRecord.setRepaymentIntro(project.getProjectName()+"返利");   //返利描述
             repaymentRecord.setRepaymentStatus("1");    //返利中
-            repaymentRecord.setRepaymentTime(DateUtils.formatDate(DateUtil.offsetDay(new Date(),i+1))); //返利时间
-            if(i < (Integer.parseInt(project.getProjectTime()) - 1)){
-                repaymentRecord.setRepaymentMoney(project.getDayProfit());
-            }else {
-                //最后一天返利
-                BigDecimal add = NumberUtil.add(project.getProjectMoney(), project.getDayProfit());
-                repaymentRecord.setRepaymentMoney(NumberUtil.roundStr(add.doubleValue(),2));
-            }
+            repaymentRecord.setRepaymentTime(DateUtil.format(DateUtil.offsetDay(new Date(),i+1),DateUtils.time_sdf)); //返利时间
+            //返利
+            repaymentRecord.setRepaymentMoney(NumberUtil.roundStr(perDayProfit,2));
             repaymentRecordMapper.insert(repaymentRecord);
         }
         return projectRecord.getId();
