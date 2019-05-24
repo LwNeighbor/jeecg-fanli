@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.modules.fanli.projectRecord.entity.ProjectRecord;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -105,10 +106,30 @@ public class ProjectController {
 				result.success("修改成功!");
 			}
 		}
-		
 		return result;
 	}
-	
+
+	 /**
+	  *  上下架
+	  * @param projectRecord
+	  * @return
+	  */
+	 @PostMapping(value = "/up")
+	 public Result<ProjectRecord> up(@RequestBody Project project) {
+		 Result<ProjectRecord> result = new Result<ProjectRecord>();
+		 try {
+			 Project byId = projectService.getById(project.getId());
+			 byId.setProjectStatus(project.getProjectStatus());
+			 projectService.updateById(byId);
+			 result.success("添加成功！");
+		 } catch (Exception e) {
+			 e.printStackTrace();
+			 log.info(e.getMessage());
+			 result.error500("操作失败");
+		 }
+		 return result;
+	 }
+
 	/**
 	  *   通过id删除
 	 * @param id

@@ -99,7 +99,7 @@ public class RechargeController {
 		if(rechargeEntity==null) {
 			result.error500("未找到对应实体");
 		}else {
-			rechargeService.confirmCharge(recharge);
+			//rechargeService.confirmCharge(recharge);
 			boolean ok = rechargeService.updateById(recharge);
 			//TODO 返回false说明什么？
 			if(ok) {
@@ -127,7 +127,7 @@ public class RechargeController {
 				 result.error500("未找到对应实体");
 			 }else {
 				 rechargeService.confirmCharge(rechargeEntity);
-				 result.success("修改成功!");
+				 result.success("充值成功!");
 			 }
 		 }
 		 return result;

@@ -16,5 +16,4 @@ public class JeecgWebApplication extends SpringBootServletInitializer {
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(JeecgApplication.class);
     }
-
 }

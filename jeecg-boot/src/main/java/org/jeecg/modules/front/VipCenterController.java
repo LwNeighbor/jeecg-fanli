@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -217,11 +218,14 @@ public class VipCenterController extends BaseController{
                 if(list.size() > 0){
                     Fanli fanli = list.get(0);
                     jsonObject.put("explain",fanli.getRepaymentNotice());
+                    jsonObject.put("lowmoney",fanli.getLowMoney());
                 }else {
                     jsonObject.put("explain",null);
+                    jsonObject.put("lowmoney",100);
                 }
                 jsonObject.put("account",user.getCashAccount());
                 jsonObject.put("accountName",user.getCashName());
+                jsonObject.put("leftMoney",user.getBucketmoney());
                 result.setResult(jsonObject);
                 result.success("操作成功");
                 return result;
@@ -257,9 +261,19 @@ public class VipCenterController extends BaseController{
                     return result;
                 }
 
-                if(Double.parseDouble(money) % 100 != 0){
-                    result.error500("提现需要100的整数被");
+               /* if(Double.parseDouble(money) % 100 != 0){
+                    result.error500("提现需要100的整数倍");
                     return result;
+                }*/
+
+                List<Fanli> list = fanliService.list();
+                if(list.size() > 0){
+                    Fanli fanli = list.get(0);
+                    String lowMoney = fanli.getLowMoney();
+                    if(Double.parseDouble(money) - Double.parseDouble(lowMoney) < 0){
+                        result.error500("提现金额低于"+lowMoney+"元,暂不能提现");
+                        return result;
+                    }
                 }
 
                 String encrypt = PasswordUtil.encrypt(user.getPhone(), tradePwd, user.getSalt());

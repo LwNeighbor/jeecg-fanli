@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.modules.fanli.repaymentRecord.entity.RepaymentRecord;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -108,7 +109,7 @@ public class 	ProjectRecordController {
 		
 		return result;
 	}
-	
+
 	/**
 	  *   通过id删除
 	 * @param id

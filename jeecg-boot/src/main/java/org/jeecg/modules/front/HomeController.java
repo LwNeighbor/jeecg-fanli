@@ -59,7 +59,11 @@ public class HomeController extends BaseController {
             //token有效
             //轮播图
             List<Carousel> list = carouselService.list();
-            List<Project> list1 = projectService.list();
+            QueryWrapper queryWrapper = new QueryWrapper();
+            queryWrapper.eq("project_status","1");      //所有上架的商品
+            queryWrapper.orderByDesc("create_time");
+            List<Project> list1 = projectService.list(queryWrapper);
+
             obj.put("carousel", list);
             obj.put("project", list1);
             result.setResult(obj);
@@ -174,6 +178,64 @@ public class HomeController extends BaseController {
     }
 
     /**
+     * 购买项目前的校验
+     *
+     * @param token
+     * @param projectId 项目id
+     * @param tradePwd  交易密码
+     * @param money     金额
+     * @return
+     */
+    @PostMapping(value = "/toBuyValidate")
+    @ApiOperation("购买项目前的校验")
+    public Result<JSONObject> projectBuy(@RequestHeader("token") String token,
+                                         @RequestParam("projectId") String projectId,
+                                         @RequestParam("money") String money
+    ) {
+        Result<JSONObject> result = new Result<JSONObject>();
+        try {
+            VipUser user = verify(token);
+            Project byId = projectService.getById(projectId);
+            if (user != null) {
+                String phone = user.getPhone();
+                String pwd = user.getTradepwd();
+                if (pwd.equals("-1")) {
+                    result.error500("未设置交易密码");
+                    return result;
+                }
+
+                if (Double.parseDouble(user.getBucketmoney()) - Double.parseDouble(money) < 0) {
+                    //余额不足
+                    result.setCode(CommonConstant.MONEY_NOT_ENOUGH2333);
+                    result.setSuccess(false);
+                    result.setMessage("余额不足");
+                    return result;
+                }
+
+                if (!byId.getPermission().equals("-1") && Double.parseDouble(user.getBuymoney()) - Double.parseDouble(byId.getPermission()) < 0) {
+                    //未充值到指定金额
+                    result.setCode(CommonConstant.BUY_NOT_ENOUGH2333);
+                    result.setSuccess(false);
+                    result.setMessage("充值未达到"+byId.getPermission()+"元");
+                    return result;
+                }
+
+                result.success("操作成功");
+                return result;
+            } else {
+                //token失效,重新登陆
+                result.error9999();
+                return result;
+            }
+        } catch (Exception e) {
+            result.error500("操作失败!");
+            return result;
+        }
+    }
+
+
+
+    /**
      * 购买项目
      *
      * @param token
@@ -183,7 +245,7 @@ public class HomeController extends BaseController {
      * @return
      */
     @PostMapping(value = "/projectBuy")
-    @ApiOperation("项目详情")
+    @ApiOperation("购买项目")
     public Result<JSONObject> projectBuy(@RequestHeader("token") String token,
                                          @RequestParam("projectId") String projectId,
                                          @RequestParam("tradePwd") String tradePwd,

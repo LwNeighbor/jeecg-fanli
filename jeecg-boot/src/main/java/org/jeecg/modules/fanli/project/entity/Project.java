@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.jeecg.common.aspect.annotation.Dict;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
 
@@ -106,4 +107,12 @@ public class Project implements Serializable {
      */
     @Excel(name = "购买权限", width = 15)
     private java.lang.String permission;
+
+    /**
+     * 产品状态
+     * 1.上架 2.下架
+     */
+    @Excel(name = "产品状态", width = 15, dicCode = "project_status")
+    @Dict(dicCode = "project_delete_status")
+    private java.lang.String projectStatus;
 }

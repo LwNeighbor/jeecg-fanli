@@ -78,10 +78,23 @@ public class FanliController {
 	public Result<Fanli> add(@RequestBody Fanli fanli) {
 		Result<Fanli> result = new Result<Fanli>();
 		try {
+
 			List<Fanli> list = fanliService.list();
 			if(list.size() > 0){
-				fanli.setId(list.get(0).getId());
-				fanliService.updateById(fanli);
+				Fanli fanli1 = list.get(0);
+				if(fanli.getLowMoney() != null){
+					fanli1.setLowMoney(fanli.getLowMoney());
+				}
+				if(fanli.getBuyDesc() != null){
+					fanli1.setBuyDesc(fanli.getBuyDesc());
+				}
+				if(fanli.getNewCourse() != null){
+					fanli1.setNewCourse(fanli.getNewCourse());
+				}
+				if(fanli.getRepaymentNotice() != null){
+					fanli1.setRepaymentNotice(fanli.getRepaymentNotice());
+				}
+				fanliService.updateById(fanli1);
 			}else {
 				fanliService.save(fanli);
 			}
@@ -112,7 +125,6 @@ public class FanliController {
 				result.success("修改成功!");
 			}
 		}
-		
 		return result;
 	}
 	
