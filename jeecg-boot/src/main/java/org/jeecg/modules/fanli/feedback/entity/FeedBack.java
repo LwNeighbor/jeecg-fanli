@@ -46,4 +46,7 @@ public class FeedBack implements Serializable {
 	/**用户id*/
 	@Excel(name = "用户id", width = 15)
 	private java.lang.String vipId;
+	/**用户id*/
+	@Excel(name = "手机号", width = 15)
+	private java.lang.String phone;
 }

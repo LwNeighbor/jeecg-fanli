@@ -55,4 +55,14 @@ public class RechargeServiceImpl extends ServiceImpl<RechargeMapper, Recharge> i
         rechargeMapper.updateById(recharge);
 
     }
+
+    @Override
+    public String sumMoney() {
+        return rechargeMapper.sumMoney();
+    }
+
+    @Override
+    public String sumMoneyDay() {
+        return rechargeMapper.sumDayMoney();
+    }
 }

@@ -14,4 +14,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface RechargeMapper extends BaseMapper<Recharge> {
 
+    String sumMoney();
+
+    String sumDayMoney();
 }

@@ -112,7 +112,7 @@ public class Project implements Serializable {
      * 产品状态
      * 1.上架 2.下架
      */
-    @Excel(name = "产品状态", width = 15, dicCode = "project_status")
+    @Excel(name = "产品状态", width = 15, dicCode = "project_delete_status")
     @Dict(dicCode = "project_delete_status")
     private java.lang.String projectStatus;
 }

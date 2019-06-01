@@ -99,4 +99,5 @@ public class VipUserServiceImpl extends ServiceImpl<VipUserMapper, VipUser> impl
         cash.setCreateTime(new Date());
         cashMapper.insert(cash);
     }
+
 }

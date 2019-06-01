@@ -1,6 +1,8 @@
 package org.jeecg.modules.front;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.ApiOperation;
@@ -144,15 +146,69 @@ public class OtherController extends BaseController {
             VipUser user = verify(token);
             if(user != null){
                 Recharge recharge = new Recharge();
+                String no = RandomUtil.randomNumbers(4);
+                String  rechargeNo= "";
+                QueryWrapper queryWrapper = new QueryWrapper();
+                String yyyyMMdd = DateUtil.format(new Date(), "yyyyMMdd");
+                while (true){
+                    rechargeNo = yyyyMMdd+no;
+                    queryWrapper.eq("recharge_no",rechargeNo);
+                    if(rechargeService.list(queryWrapper).size() == 0){
+                        break;
+                    }
+                }
                 recharge.setRechargeMoney(money);
                 recharge.setRechargeStatus("1");    //充值状态 1.充值中 2.充值成功 3.充值失败
                 recharge.setRechargeTime(DateUtils.formatTime(new Date()));
                 recharge.setRechargeType(type);
                 recharge.setVipId(user.getId());
                 recharge.setPhone(user.getPhone());
+                recharge.setRechargeNo(rechargeNo);
 
                 rechargeService.save(recharge);
                 result.success("操作成功");
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id",recharge.getId());
+                jsonObject.put("rechargeNo",rechargeNo);
+                result.setResult(jsonObject);
+                return result;
+            }else {
+                //token失效,重新登陆
+                result.error9999();
+                return result;
+            }
+        }catch (Exception e){
+            result.error500("操作失败!");
+            return result;
+        }
+    }
+
+
+    /**
+     * 单次充值信息
+     * @param token
+     * @param id
+     * @return
+     */
+    @PostMapping("/rechargeById")
+    @ApiOperation("充值订单信息")
+    public Result<JSONObject> rechargeById(@RequestHeader("token") String token,
+                                       @RequestParam("id") String id){
+        Result<JSONObject> result = new Result<JSONObject>();
+        try{
+            VipUser user = verify(token);
+            if(user != null){
+
+                Recharge recharge = rechargeService.getById(id);
+
+                result.success("操作成功");
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("phone",recharge.getPhone());
+                jsonObject.put("type",recharge.getRechargeType());
+                jsonObject.put("money",recharge.getRechargeMoney());
+                jsonObject.put("rechargeNo",recharge.getRechargeNo());
+                jsonObject.put("time",recharge.getRechargeTime());
+                result.setResult(jsonObject);
                 return result;
             }else {
                 //token失效,重新登陆
@@ -167,18 +223,26 @@ public class OtherController extends BaseController {
 
     /**
      * 充值记录
+     * @type 0.全部  1.未处理  2.已处理
      * @return
      */
     @PostMapping("/rechargeRecord")
     @ApiOperation("充值记录")
-    public Result<JSONObject> rechargeRecord(@RequestHeader("token")String token){
+    public Result<JSONObject> rechargeRecord(@RequestHeader("token")String token,
+                                             @RequestParam("type") String type
+                                             ){
         Result<JSONObject> result = new Result<JSONObject>();
         try{
             VipUser user = verify(token);
             if(user != null){
                 QueryWrapper queryWrapper = new QueryWrapper();
                 queryWrapper.eq("vip_id",user.getId());
-                queryWrapper.eq("recharge_status","2");      //充值成功的记录
+                queryWrapper.orderByDesc("recharge_time");
+                if(type.equals("1")){       //未处理
+                    queryWrapper.eq("recharge_status","1");
+                }else if(type.equals("2")){     //已处理
+                    queryWrapper.eq("recharge_status","2");
+                }
                 List list = rechargeService.list(queryWrapper);
                 JSONObject json = new JSONObject();
                 json.put("record",list);
@@ -233,6 +297,7 @@ public class OtherController extends BaseController {
                 FeedBack feedBack = new FeedBack();
                 feedBack.setVipId(user.getId());
                 feedBack.setFeedbackContent(content);
+                feedBack.setPhone(user.getPhone());
                 feedBackService.save(feedBack);
                 result.success("操作成功");
                 return result;

@@ -58,14 +58,14 @@ public class VipCenterController extends BaseController{
             VipUser user = verify(token);
             if(user != null){
                 QueryWrapper<RepaymentRecord> queryWrapper = new QueryWrapper<>();
-                QueryWrapper<RepaymentRecord> repaymentTime = queryWrapper.between("repayment_time", DateUtil.offsetDay(new Date(), -1), DateUtil.offsetDay(new Date(), -1));
+                QueryWrapper<RepaymentRecord> repaymentTime = queryWrapper.between("repayment_time", DateUtil.offsetDay(new Date(), -1), new Date());
                 queryWrapper.eq("repayment_status","2");
+                queryWrapper.eq("phone",user.getPhone());
                 List<RepaymentRecord> list = repaymentRecordService.list(repaymentTime);
                 double yesterMoney = 0.00;
                 for(RepaymentRecord repaymentRecord : list){
                     yesterMoney = yesterMoney+Double.parseDouble(repaymentRecord.getRepaymentMoney());
                 }
-
 
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("avater",user.getAvater());

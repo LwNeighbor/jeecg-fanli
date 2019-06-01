@@ -82,6 +82,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         //自动生成若干条返利记录
         for(int i=0;i < Integer.parseInt(project.getProjectTime());i++){
             RepaymentRecord repaymentRecord = new RepaymentRecord();
+            repaymentRecord.setPhone(projectRecord.getPhone());
             repaymentRecord.setRecordId(projectRecord.getId()); //任务记录id
             repaymentRecord.setRepaymentIntro(project.getProjectName()+"返利");   //返利描述
             repaymentRecord.setRepaymentStatus("1");    //返利中

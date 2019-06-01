@@ -60,4 +60,7 @@ public class RepaymentRecord implements Serializable {
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private java.util.Date updateTime;
+	/**用户手机号*/
+	@Excel(name = "用户手机号", width = 15)
+	private java.lang.String phone;
 }

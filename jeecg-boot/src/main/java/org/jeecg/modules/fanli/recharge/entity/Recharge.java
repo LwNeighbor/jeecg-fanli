@@ -39,7 +39,7 @@ public class Recharge implements Serializable {
 	/**用户手机号*/
 	@Excel(name = "用户手机号", width = 15)
 	private java.lang.String phone;
-	/**充值状态*/
+	/**充值状态 1.充值中 2.充值成功 3.充值失败*/
 	@Excel(name = "充值状态", width = 15,dicCode="rechargeStatus")
 	@Dict(dicCode = "recharge_status")
 	private java.lang.String rechargeStatus;
@@ -61,4 +61,7 @@ public class Recharge implements Serializable {
 	/**用户id*/
 	@Excel(name = "用户id", width = 15)
 	private java.lang.String vipId;
+	/**订单编号*/
+	@Excel(name = "订单编号", width = 15)
+	private java.lang.String rechargeNo;
 }

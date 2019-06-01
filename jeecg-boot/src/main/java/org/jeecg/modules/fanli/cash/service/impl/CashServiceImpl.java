@@ -51,4 +51,12 @@ public class CashServiceImpl extends ServiceImpl<CashMapper, Cash> implements IC
         vipUserMapper.updateById(user);
     }
 
+    @Override
+    public String sumMoney() {
+        return cashMapper.sumMoney();
+    }
+    @Override
+    public String sumMoneyDay() {
+        return cashMapper.sumMoneyDay();
+    }
 }

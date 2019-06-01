@@ -13,4 +13,8 @@ public interface IRechargeService extends IService<Recharge> {
 
     //确认充值
     void confirmCharge(Recharge recharge);
+
+    String sumMoney();
+
+    String sumMoneyDay();
 }

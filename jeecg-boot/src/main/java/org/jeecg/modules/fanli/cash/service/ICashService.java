@@ -13,4 +13,8 @@ import org.jeecg.modules.fanli.vipUser.entity.VipUser;
 public interface ICashService extends IService<Cash> {
 
     void toCash(String money, VipUser user);
+
+    String sumMoney();
+
+    String sumMoneyDay();
 }

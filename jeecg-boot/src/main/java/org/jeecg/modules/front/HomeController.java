@@ -147,7 +147,7 @@ public class HomeController extends BaseController {
                     //余额不足
                     result.setCode(CommonConstant.MONEY_NOT_ENOUGH2333);
                     result.setSuccess(false);
-                    result.setMessage("余额不足");
+                    result.setMessage("您的当前余额不足，请去充值");
                     return result;
                 }
 
@@ -155,7 +155,7 @@ public class HomeController extends BaseController {
                     //未充值到指定金额
                     result.setCode(CommonConstant.BUY_NOT_ENOUGH2333);
                     result.setSuccess(false);
-                    result.setMessage("充值未达到"+byId.getPermission()+"元");
+                    result.setMessage("充值金额不足"+byId.getPermission()+",不能购买该产品,请去充值");
                     return result;
                 }
 
@@ -208,7 +208,7 @@ public class HomeController extends BaseController {
                     //余额不足
                     result.setCode(CommonConstant.MONEY_NOT_ENOUGH2333);
                     result.setSuccess(false);
-                    result.setMessage("余额不足");
+                    result.setMessage("您的当前余额不足，请去充值");
                     return result;
                 }
 
@@ -216,7 +216,7 @@ public class HomeController extends BaseController {
                     //未充值到指定金额
                     result.setCode(CommonConstant.BUY_NOT_ENOUGH2333);
                     result.setSuccess(false);
-                    result.setMessage("充值未达到"+byId.getPermission()+"元");
+                    result.setMessage("充值金额不足"+byId.getPermission()+",不能购买该产品,请去充值");
                     return result;
                 }
 
@@ -274,7 +274,7 @@ public class HomeController extends BaseController {
                     //余额不足
                     result.setCode(CommonConstant.MONEY_NOT_ENOUGH2333);
                     result.setSuccess(false);
-                    result.setMessage("余额不足");
+                    result.setMessage("您的当前余额不足，请去充值");
                     return result;
                 }
 
@@ -282,7 +282,7 @@ public class HomeController extends BaseController {
                     //未充值到指定金额
                     result.setCode(CommonConstant.BUY_NOT_ENOUGH2333);
                     result.setSuccess(false);
-                    result.setMessage("充值未达到"+byId.getPermission()+"元");
+                    result.setMessage("充值金额不足"+byId.getPermission()+",不能购买该产品,请去充值");
                     return result;
                 }
 

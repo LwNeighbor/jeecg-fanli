@@ -14,4 +14,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface CashMapper extends BaseMapper<Cash> {
 
+    String sumMoney();
+
+    String sumMoneyDay();
 }

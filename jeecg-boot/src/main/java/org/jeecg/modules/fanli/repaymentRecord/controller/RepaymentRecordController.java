@@ -70,6 +70,22 @@ public class RepaymentRecordController {
 		return result;
 	}
 
+	 /**
+	  * 分页列表查询
+	  * @param repaymentRecord
+	  * @param req
+	  * @return
+	  */
+	 @GetMapping(value = "/inlineList")
+	 public Result<List<RepaymentRecord>> queryPageList(RepaymentRecord repaymentRecord,HttpServletRequest req) {
+		 Result<List<RepaymentRecord>> result = new Result<List<RepaymentRecord>>();
+		 QueryWrapper<RepaymentRecord> queryWrapper = QueryGenerator.initQueryWrapper(repaymentRecord, req.getParameterMap());
+		 List<RepaymentRecord> pageList = repaymentRecordService.list(queryWrapper);
+		 result.setSuccess(true);
+		 result.setResult(pageList);
+		 return result;
+	 }
+
 	/**
 	  *   添加
 	 * @param repaymentRecord

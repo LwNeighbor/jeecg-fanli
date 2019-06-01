@@ -139,5 +139,4 @@ public class CommonController {
 		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
 		return new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, path);
 	}
-
 }
