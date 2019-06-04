@@ -13,5 +13,6 @@ public class FrontCodeConstant {
 
 
 
-    public static final String REGISTER_MSG_TEMPLATE = "您的验证码是:%s。5分钟内有效【任务天堂】";
+    public static final String REGISTER_MSG_TEMPLATE = "【盛泽财富】验证码:%s，请不要将您的验证码泄露给任何人，60秒内完成输入有效。";
+
 }

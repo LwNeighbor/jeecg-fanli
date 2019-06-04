@@ -33,10 +33,10 @@ public class BaseController {
      */
     public int sendMsg(String phone) throws Exception {
         String url = "https://dx.ipyy.net/sms.aspx";
-        String accountName="renwu190425";							//改为实际账号名
-        String password="renwu190425";								//改为实际发送密码
+        String accountName="szcf190603";							//改为实际账号名
+        String password="szcf190603";								//改为实际发送密码
 
-        int i = RandomUtil.randomInt(1000,10000);
+        int i = RandomUtil.randomInt(100000,1000000);
         String text = "";
         //注册
         text = String.format(FrontCodeConstant.REGISTER_MSG_TEMPLATE,String.valueOf(i));
