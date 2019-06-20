@@ -68,7 +68,7 @@ public class VipCenterController extends BaseController{
                 }
 
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("avater",user.getAvater());
+                jsonObject.put("avater","sys/common/view/"+user.getAvater());
                 jsonObject.put("bucketmoney",user.getBucketmoney());
                 jsonObject.put("nickname",user.getNickname());
                 jsonObject.put("phone",user.getPhone());
@@ -180,7 +180,7 @@ public class VipCenterController extends BaseController{
                 vipUserService.updateById(user);
                 result.success("操作成功");
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("avater",dbpath);
+                jsonObject.put("avater","sys/common/view/"+dbpath);
                 result.setResult(jsonObject);
 
                 return result;

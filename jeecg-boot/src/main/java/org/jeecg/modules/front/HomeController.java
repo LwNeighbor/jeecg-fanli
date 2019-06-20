@@ -61,7 +61,7 @@ public class HomeController extends BaseController {
             List<Carousel> list = carouselService.list();
             QueryWrapper queryWrapper = new QueryWrapper();
             queryWrapper.eq("project_status","1");      //所有上架的商品
-            queryWrapper.orderByDesc("create_time");
+            queryWrapper.orderByAsc("project_money");
             List<Project> list1 = projectService.list(queryWrapper);
 
             obj.put("carousel", list);

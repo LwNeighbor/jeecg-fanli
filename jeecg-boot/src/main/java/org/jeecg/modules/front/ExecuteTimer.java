@@ -27,6 +27,7 @@ public class ExecuteTimer {
         QueryWrapper<RepaymentRecord> queryWrapper = new QueryWrapper();
         QueryWrapper<RepaymentRecord> queryWrapper1 = new QueryWrapper();
         queryWrapper.eq("repayment_time",format);
+        queryWrapper.eq("updown","N");
         List<RepaymentRecord> list = repaymentRecordService.list(queryWrapper);
         for(RepaymentRecord repaymentRecord : list){
             //查询该id是否还有

@@ -16,4 +16,6 @@ public interface IRepaymentRecordService extends IService<RepaymentRecord> {
     void updateNoComplete(RepaymentRecord repaymentRecord, List<RepaymentRecord> list) throws Exception;
 
     void updateComplete(RepaymentRecord repaymentRecord) throws Exception;
+
+    void updateUpdownByRecordId(String id);
 }

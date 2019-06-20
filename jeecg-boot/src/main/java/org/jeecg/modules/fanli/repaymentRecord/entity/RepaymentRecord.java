@@ -63,4 +63,10 @@ public class RepaymentRecord implements Serializable {
 	/**用户手机号*/
 	@Excel(name = "用户手机号", width = 15)
 	private java.lang.String phone;
+
+	/**
+	 * 上下架
+	 */
+	@Excel(name = "上下架", width = 15)
+	private java.lang.String updown;
 }

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.fanli.project.entity.Project;
 import org.jeecg.modules.fanli.projectRecord.entity.ProjectRecord;
 import org.jeecg.modules.fanli.projectRecord.service.IProjectRecordService;
 
@@ -20,6 +21,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import org.jeecg.modules.fanli.repaymentRecord.entity.RepaymentRecord;
+import org.jeecg.modules.fanli.repaymentRecord.service.IRepaymentRecordService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -46,6 +48,8 @@ import com.alibaba.fastjson.JSON;
 public class 	ProjectRecordController {
 	@Autowired
 	private IProjectRecordService projectRecordService;
+	@Autowired
+	private IRepaymentRecordService repaymentRecordService;
 	
 	/**
 	  * 分页列表查询
@@ -234,5 +238,32 @@ public class 	ProjectRecordController {
       }
       return Result.ok("文件导入失败！");
   }
+
+	 /**
+	  *  任务中断
+	  * @param record
+	  * @return
+	  */
+	 @PostMapping(value = "/breakUpDown")
+	 public Result<ProjectRecord> breakUpDown(@RequestBody ProjectRecord record) {
+		 Result<ProjectRecord> result = new Result<ProjectRecord>();
+		 try {
+			 ProjectRecord projectRecord = projectRecordService.getById(record.getId());
+			 if(projectRecord.getUpdown().equalsIgnoreCase("Y")){
+			 	//说明该记录已经被中断了
+				 result.success("修改成功！");
+				 return result;
+			 }
+			 //中断任务,将已返金额更新至用户余额
+			 projectRecordService.breakUpDown(projectRecord);
+
+			 result.success("添加成功！");
+		 } catch (Exception e) {
+			 e.printStackTrace();
+			 log.info(e.getMessage());
+			 result.error500("操作失败");
+		 }
+		 return result;
+	 }
 
 }

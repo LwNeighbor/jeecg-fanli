@@ -142,4 +142,10 @@ public class ProjectRecord implements Serializable {
      */
     @Excel(name = "待返百分比", width = 15)
     private java.lang.String noBackPercent;
+
+    /**
+     * 上下架
+     */
+    @Excel(name = "上下架", width = 15)
+    private java.lang.String updown;
 }

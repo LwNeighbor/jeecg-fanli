@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8080
   servlet:
     context-path: /jeecg-boot
     compression:
@@ -88,8 +88,8 @@ spring:
         connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
       datasource:
         master:
-          url: jdbc:mysql://122.114.239.176:3306/jeecg-boot?useUnicode=true&serverTimezone=GMT%2B8&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-          username: jeecg-boot
+          url: jdbc:mysql://localhost:3306/jeecg-boot?useUnicode=true&serverTimezone=GMT%2B8&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+          username: root
           password: 123456
           driver-class-name: com.mysql.jdbc.Driver
           # 多数据源配置
@@ -101,7 +101,7 @@ spring:
   #redis 配置
   redis:
     database: 0
-    host: 202.61.85.3
+    host: localhost
     lettuce:
       pool:
         max-active: 8   #最大连接数据库连接数,设 0 为没有限制
@@ -119,6 +119,6 @@ mybatis-plus:
 jeecg :
   path :
     #文件上传根目录 设置
-    upload: /home/upFiles
+    upload: D://home//upFiles
     #webapp文件路径
-    webapp: /home/webapp
+    webapp: D://home//webapp

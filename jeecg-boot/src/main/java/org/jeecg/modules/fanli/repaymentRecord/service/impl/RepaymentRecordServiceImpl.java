@@ -61,7 +61,9 @@ public class RepaymentRecordServiceImpl extends ServiceImpl<RepaymentRecordMappe
         //更新用户资产总额
         VipUser vipUser = projectRecordMapper.selectVipUserByProjectRecordId(repaymentRecord.getRecordId());
         double add = NumberUtil.add(Double.parseDouble(repaymentRecord.getRepaymentMoney()), Double.parseDouble(vipUser.getTotal()));
+        double profit = NumberUtil.add(Double.parseDouble(repaymentRecord.getRepaymentMoney()), Double.parseDouble(vipUser.getBucketmoney()));
         vipUser.setTotal(NumberUtil.roundStr(add,2));
+        vipUser.setBucketmoney(NumberUtil.roundStr(profit,2));  //每日返利直接更新余额
         vipUserMapper.updateById(vipUser);
 
         //更新返利记录状态
@@ -86,14 +88,19 @@ public class RepaymentRecordServiceImpl extends ServiceImpl<RepaymentRecordMappe
         //更新用户资产总额
         VipUser vipUser = projectRecordMapper.selectVipUserByProjectRecordId(repaymentRecord.getRecordId());
         double add = NumberUtil.add(Double.parseDouble(repaymentRecord.getRepaymentMoney()), Double.parseDouble(vipUser.getTotal()));
-        double profit = NumberUtil.add(Double.parseDouble(projectRecord.getProfit()), Double.parseDouble(vipUser.getBucketmoney()));
+        double profit = NumberUtil.add(Double.parseDouble(repaymentRecord.getRepaymentMoney()), Double.parseDouble(vipUser.getBucketmoney()));
         vipUser.setTotal(NumberUtil.roundStr(add,2));   //更新总额
-        vipUser.setBucketmoney(NumberUtil.roundStr(profit,2));  //更新余额,因为已经全部返还完了
+        vipUser.setBucketmoney(NumberUtil.roundStr(profit,2));  //每日返利直接更新余额
         vipUserMapper.updateById(vipUser);
 
         //更新返利记录状态
         repaymentRecord.setRepaymentStatus("2");
         repaymentRecordMapper.updateById(repaymentRecord);
 
+    }
+
+    @Override
+    public void updateUpdownByRecordId(String id) {
+        repaymentRecordMapper.updateBreakById(id);
     }
 }
